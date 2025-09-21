@@ -4,7 +4,8 @@
       "name": "PROS Project",
       "includePath": [
         "${workspaceFolder}/**",
-        "d:\\Drive-Windows\\Windows\\Documents-Main\\GitHub\\PushBack\\PushBack-15\\include"
+        "d:\\Drive-Windows\\Windows\\Documents-Main\\GitHub\\PushBack\\PushBack-15\\include",
+        "d:\\Drive-Windows\\Windows\\Documents-Main\\GitHub\\PushBack\\include"
       ],
       "defines": [
         "_DEBUG",
@@ -17,7 +18,7 @@
       "intelliSenseMode": "gcc-arm",
       "browse": {
         "path": [
-          "d:\\Drive-Windows\\Windows\\Documents-Main\\GitHub\\PushBack\\PushBack-15"
+          "d:\\Drive-Windows\\Windows\\Documents-Main\\GitHub\\PushBack"
         ],
         "limitSymbolsToIncludedHeaders": true,
         "databaseFilename": ""
