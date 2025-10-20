@@ -69,6 +69,9 @@ void autonomous() {}
 void opcontrol() {
 	
 	while (true) {	
+        int leftY = masterController.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        int rightY = masterController.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+        chassis.tank(leftY, rightY);
 		pros::delay(20);                               // Run for 20 ms then update
 	}
 } // End of opcontrol 
