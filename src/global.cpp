@@ -1,6 +1,24 @@
 #include "global.hpp"
 #include "lemlib/api.hpp"
+#include "autons.hpp"  
+#include "driver_profile.hpp"
 
+/** Define Variables  */
+int current_profile_selection = 0; // Currently selected profile index
+std::vector<ProfileOption> profile_list = {
+    {"Default", default_profile},
+    {"Calvin", calvin_profile},
+    {"IDK", unknown_profile}
+};
+
+int current_auton_selection = 0;// Currently selected auton index
+
+std::vector<AutonOption> auton_list = {
+    {"Left Auton", auton_left},
+    {"Right Auton", auton_right},
+    {"Skills", auton_skills}
+};
+int autonColor = 1; // 1 is blue by defualt  -1 is red
 
 // Define variables 
 

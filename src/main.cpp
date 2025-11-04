@@ -1,4 +1,19 @@
 #include "main.h"
+#include "global.hpp"
+#include "driver_profile.hpp"
+
+// basic
+#include <vector>
+#include <string>
+#include <sstream>
+#include <iomanip>
+#include <cstdio> 
+
+// lvgl vars
+#include "liblvgl/lvgl.h"
+
+#include "ui.hpp" 
+#include "pros/apix.h"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -9,6 +24,8 @@
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate(); // calibrate sensors
+    create_main_screen();
+    /** 
     // print position to brain screen
     pros::Task screen_task([&]() {
         while (true) {
@@ -20,6 +37,7 @@ void initialize() {
             pros::delay(20);
         }
     });
+    */
 }
 
 /**
@@ -51,7 +69,9 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() {
+    auton_list[current_auton_selection].func();
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -69,9 +89,6 @@ void autonomous() {}
 void opcontrol() {
 	
 	while (true) {	
-        int leftY = masterController.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        int rightY = masterController.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
-        chassis.tank(leftY, rightY);
 		pros::delay(20);                               // Run for 20 ms then update
 	}
 } // End of opcontrol 

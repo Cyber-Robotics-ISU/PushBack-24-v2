@@ -1,7 +1,25 @@
 #pragma once
 #include "api.h"
 #include "lemlib/api.hpp"
+#include "autons.hpp"  
+#include "driver_profile.hpp"
+#include "pid.hpp"
 
+/** Define global variables and objects here */
+struct ProfileOption { // profile option struct
+    const char* name;
+    void (*func)();
+};
+extern int current_profile_selection; // current profile selection
+extern std::vector<ProfileOption> profile_list;
+
+struct AutonOption { // Auton Option struct
+    const char* name;
+    void (*func)();
+};
+extern int autonColor;
+extern int current_auton_selection; // Current auton selection
+extern std::vector<AutonOption> auton_list;
 
 // Define global variables and objects here
 extern pros::Controller masterController;
