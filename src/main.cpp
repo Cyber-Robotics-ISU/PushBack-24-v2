@@ -70,5 +70,26 @@ void opcontrol() {
 	
 	while (true) {	
 		pros::delay(20);                               // Run for 20 ms then update
+
+        if (masterController.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+            toggleIntake();
+        }
+
+
 	}
 } // End of opcontrol 
+
+/**
+ * Will toggle the intake motor group. intakeToggle is a boolean value, it is 
+ * assigned to true if the intake motor group should be active. it is assigned
+ * to false if the intake motor group is on and running at max power.
+ */
+void toggleIntake() {
+    if (intakeToggle) {
+        intakeToggle = false;
+        intake_motor_group.move(127); // '127' is supposedly the maximum speed of the intake motor group
+    } else {
+        intakeToggle = true;
+        intake_motor_group.move(0);
+    }
+}

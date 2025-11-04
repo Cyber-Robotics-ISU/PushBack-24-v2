@@ -3,6 +3,7 @@
 
 
 // Define variables 
+bool intakeToggle = true; // intake toggle, true if intake is off
 
 // Defined VEX Main Master Controller
 pros::Controller masterController(pros::E_CONTROLLER_MASTER);
@@ -12,6 +13,7 @@ pros::Controller masterController(pros::E_CONTROLLER_MASTER);
 // Define VEX Motor Groups
 pros::MotorGroup left_motor_group({-1, 2, -3}, pros::MotorGearset::blue); // left motors use 600 RPM cartrifges
 pros::MotorGroup right_motor_group({4, -5, 6}, pros::MotorGearset::blue); // right motors use 600 RPM cartridges
+pros::MotorGroup intake_motor_group({19, -20}, pros::MotorGearset::blue);  // intake motors use 600 RPM cartriges
 
 // Define VEX Sensors
 pros::Imu imu(10); 
