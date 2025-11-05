@@ -3,6 +3,7 @@
 
 
 // Define variables 
+bool intakeToggle = true; // intake toggle, true if intake is off
 
 // Defined VEX Main Master Controller
 pros::Controller masterController(pros::E_CONTROLLER_MASTER);

@@ -14,6 +14,7 @@ const extern int MOTOR_OFF = 0;
 extern pros::MotorGroup left_motor_group;
 extern pros::MotorGroup right_motor_group;
 extern pros::MotorGroup intake_motor_group;
+
 // Define VEX Sensors
 extern pros::Imu imu;
 extern pros::Rotation horizontal_encoder;
