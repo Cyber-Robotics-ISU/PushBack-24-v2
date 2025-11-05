@@ -66,9 +66,55 @@ void autonomous() {}
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
+
+/**
+ *  This toggle function is used for the intake motor to allow the driver to
+ *  open or close a flap that is used to eject incorrect blocks 
+ *  via the R1 button on the PROS controller. The function returns a boolean value 
+ *  motorOn which represents the current state of the motor either on or off (1 or 0)
+ *    
+ */
+bool ToggleButton(){
+    // create a previous button state and motor state to compare with 
+    // Initially the button is unpressed and the motor is off
+    
+    static bool last_Button_State = false; 
+    static bool motorOn = false;
+    bool current_Button_State = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
+    
+    // checks if current state has changed from past state
+    if(current_Button_State && !last_Button_State){  
+        motorOn = !motorOn; // Change the current motor state 
+    }
+    last_Button_State = current_Button_State; // update last button state
+    return motorOn; // Return the last motor state
+}
+/**
+ *  This is a function used for the turn on the intake motor while the driver is holding button R2
+ *  on the PROS controller. This motor is used to open or close a flap that eject incorrect blocks 
+ */
+void HoldButton(){
+    bool button_R2 = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
+    if(button_R2) {
+        intake_motor_group.move(MAX_SPEED);
+    }
+    else{
+        intake_motor_group.move(MOTOR_OFF);
+    }
+}
+
 void opcontrol() {
-	
 	while (true) {	
-		pros::delay(20);                               // Run for 20 ms then update
-	}
+        bool is_Motor_On = ToggleButton();
+        bool R2_BUTTON_PRESSED = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
+        // If button R2 is pressed, use the HoldButton function to control the motor 
+        if(R2_BUTTON_PRESSED){ 
+            HoldButton();
+        // Otherwise use the ToggleButton function to control the motor
+        }else{
+            // If motor is on, set motor to max speed otherwise the motor is turned off
+            intake_motor_group.move(is_Motor_On ? MAX_SPEED: MOTOR_OFF); 
+        }     
+        pros::delay(20);  // Run for 20 ms then update 
+    }            
 } // End of opcontrol 
