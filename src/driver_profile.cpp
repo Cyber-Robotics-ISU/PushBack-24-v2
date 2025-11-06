@@ -8,16 +8,28 @@
 
 #include "global.hpp"
 
-void default_profile() {
+void default_profile_init() {
+    masterController.set_text(0,1, "test 0");
+}
+
+void default_profile_loop() {
     int leftY = masterController.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
     int rightY = masterController.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
     chassis.tank(leftY, rightY);
 }
 
-void calvin_profile() {
+void calvin_profile_init() {
+   masterController.set_text(0,1, "test 1");
+}
+
+void calvin_profile_loop() {
    
 }
 
-void unknown_profile() {
+void unknown_profile_init() {
+    masterController.set_text(0,1, "test 2");
+}
+
+void unknown_profile_loop() {
     
 }
