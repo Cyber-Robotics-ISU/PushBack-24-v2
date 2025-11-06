@@ -5,8 +5,7 @@
 
 // Define global variables and objects here
 extern pros::Controller masterController;
-const extern int MAX_SPEED = 127;
-const extern int MOTOR_OFF = 0;
+
 
 // Define VEX Motors
 

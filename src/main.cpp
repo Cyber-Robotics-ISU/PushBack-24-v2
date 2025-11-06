@@ -96,10 +96,10 @@ bool ToggleButton(){
 void HoldButton(){
     bool button_R2 = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
     if(button_R2) {
-        intake_motor_group.move(MAX_SPEED);
+        intake_motor_group.move(127);
     }
     else{
-        intake_motor_group.move(MOTOR_OFF);
+        intake_motor_group.move(0);
     }
 }
 
@@ -113,7 +113,7 @@ void opcontrol() {
         // Otherwise use the ToggleButton function to control the motor
         }else{
             // If motor is on, set motor to max speed otherwise the motor is turned off
-            intake_motor_group.move(is_Motor_On ? MAX_SPEED: MOTOR_OFF); 
+            intake_motor_group.move(is_Motor_On ? 127: 0); 
         }     
         pros::delay(20);  // Run for 20 ms then update 
     }            
