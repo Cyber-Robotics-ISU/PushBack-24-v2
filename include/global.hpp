@@ -8,7 +8,8 @@
 /** Define global variables and objects here */
 struct ProfileOption { // profile option struct
     const char* name;
-    void (*func)();
+    void (*init)();  // runs once when switching
+    void (*loop)();  // runs every cycle
 };
 extern int current_profile_selection; // current profile selection
 extern std::vector<ProfileOption> profile_list;
@@ -34,6 +35,7 @@ extern pros::MotorGroup right_motor_group;
 extern pros::Imu imu;
 extern pros::Rotation horizontal_encoder;
 extern pros::Rotation vertical_encoder;
+extern pros::Optical optical_sensor;
 
 // Define LebLib
 extern lemlib::TrackingWheel horizontal_tracking_wheel;

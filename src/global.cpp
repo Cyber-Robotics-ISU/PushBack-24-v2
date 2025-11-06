@@ -6,9 +6,9 @@
 /** Define Variables  */
 int current_profile_selection = 0; // Currently selected profile index
 std::vector<ProfileOption> profile_list = {
-    {"Default", default_profile},
-    {"Calvin", calvin_profile},
-    {"IDK", unknown_profile}
+    {"Default", default_profile_init, default_profile_loop},
+    {"Calvin", calvin_profile_init, calvin_profile_loop},
+    {"IDK", unknown_profile_init, unknown_profile_loop}
 };
 
 int current_auton_selection = 0;// Currently selected auton index
@@ -35,6 +35,7 @@ pros::MotorGroup right_motor_group({5,-6,7,-8}, pros::MotorGearset::blue); // ri
 pros::Imu imu(17); 
 pros::Rotation horizontal_encoder(20); // horizontal tracking wheel Rotation sensor
 pros::Rotation vertical_encoder(21); // vertical tracking wheel Rotation sensor
+pros::Optical optical_sensor(7);
 
 // Define LebLib 
 lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_275, -5.75); // horizontal tracking wheel
