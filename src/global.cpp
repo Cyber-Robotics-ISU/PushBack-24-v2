@@ -39,7 +39,15 @@ pros::Rotation vertical_encoder(21); // vertical tracking wheel Rotation sensor
 // Define LebLib 
 lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_275, -5.75); // horizontal tracking wheel
 lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_275, -2.5); // vertical tracking wheel
-lemlib::ControllerSettings empty_controller(
+lemlib::ControllerSettings angular_controller(
+    0, 0, 0,   // kP, kI, kD
+    0,         // antiWindup
+    0, 0,      // small error range & timeout
+    0, 0,      // large error range & timeout
+    0          // max slew
+);
+
+lemlib::ControllerSettings lateral_controller(
     0, 0, 0,   // kP, kI, kD
     0,         // antiWindup
     0, 0,      // small error range & timeout
@@ -66,7 +74,7 @@ lemlib::Drivetrain drivetrain(&left_motor_group, // left motor group
 
 // Create the chassis
 lemlib::Chassis chassis(drivetrain, // drivetrain settings
-                        empty_controller, // lateral PID settings
-                        empty_controller, // angular PID settings
+                        lateral_controller, // lateral PID settings
+                        angular_controller, // angular PID settings
                         sensors // odometry sensors
 );

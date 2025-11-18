@@ -39,7 +39,8 @@ extern pros::Rotation vertical_encoder;
 // Define LebLib
 extern lemlib::TrackingWheel horizontal_tracking_wheel;
 extern lemlib::TrackingWheel vertical_tracking_wheel;
-extern lemlib::ControllerSettings empty_controller;
+extern lemlib::ControllerSettings lateral_controller;
+extern lemlib::ControllerSettings angular_controller;
 extern lemlib::OdomSensors sensors;
 extern lemlib::Drivetrain drivetrain;
 extern lemlib::Chassis chassis;

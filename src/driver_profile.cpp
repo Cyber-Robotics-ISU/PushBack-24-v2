@@ -14,8 +14,8 @@ void default_profile_init() {
 
 void default_profile_loop() {
     int leftY = masterController.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-    int rightY = masterController.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
-    chassis.tank(leftY, rightY);
+    int rightX = masterController.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+    chassis.arcade(leftY, rightX);
 }
 
 void calvin_profile_init() {
