@@ -4,6 +4,8 @@
 #include "autons.hpp"  
 #include "driver_profile.hpp"
 #include "pid.hpp"
+#include "intake_belt.hpp"
+#include "pneumatics.hpp"
 
 /** Define global variables and objects here */
 struct ProfileOption { // profile option struct
@@ -33,6 +35,7 @@ extern pros::MotorGroup right_motor_group;
 
 // Define VEX Sensors
 extern pros::Imu imu;
+extern pros::Distance distance;
 extern pros::Rotation horizontal_encoder;
 extern pros::Rotation vertical_encoder;
 

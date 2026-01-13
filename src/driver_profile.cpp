@@ -13,9 +13,23 @@ void default_profile_init() {
 }
 
 void default_profile_loop() {
+    
+    if(masterController.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+        belt_move(127);
+    }else if(masterController.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+        belt_move(-127);
+    }else{
+        belt_move(0);
+    }
+
+    if (masterController.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+        pneumatic_group.toggle();
+    }
+
     int leftY = masterController.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
     int rightX = masterController.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
     chassis.arcade(leftY, rightX);
+
 }
 
 void calvin_profile_init() {
