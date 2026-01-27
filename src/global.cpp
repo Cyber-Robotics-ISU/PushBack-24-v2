@@ -36,16 +36,16 @@ pros::MotorGroup intake_group({17, 18, -19, -20}, pros::MotorGearset::blue); // 
 pros::adi::Pneumatics pneumatic_group({'A'}, false);
 
 // Define VEX Sensors
-pros::Imu imu(17); 
-pros::Distance distance(16);
-pros::Rotation horizontal_encoder(20); // horizontal tracking wheel Rotation sensor
-pros::Rotation vertical_encoder(21); // vertical tracking wheel Rotation sensor
+pros::Imu imu(15); 
+// pros::Distance distance(16);
+pros::Rotation horizontal_encoder(12); // horizontal tracking wheel Rotation sensor
+pros::Rotation vertical_encoder(11); // vertical tracking wheel Rotation sensor
 
 // Define LebLib 
-lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_275, -5.75); // horizontal tracking wheel
-lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_275, -2.5); // vertical tracking wheel
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_2, -2); // horizontal tracking wheel
+lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_2, -2); // vertical tracking wheel
 lemlib::ControllerSettings angular_controller(
-    0, 0, 0,   // kP, kI, kD
+    3.4, 0, 0,   // kP, kI, kD
     0,         // antiWindup
     0, 0,      // small error range & timeout
     0, 0,      // large error range & timeout
@@ -53,7 +53,7 @@ lemlib::ControllerSettings angular_controller(
 );
 
 lemlib::ControllerSettings lateral_controller(
-    0, 0, 0,   // kP, kI, kD
+    5.5, 0, 0,   // kP, kI, kD
     0,         // antiWindup
     0, 0,      // small error range & timeout
     0, 0,      // large error range & timeout

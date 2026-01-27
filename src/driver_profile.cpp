@@ -22,7 +22,14 @@ void default_profile_loop() {
         belt_move(0);
     }
 
-    if (masterController.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+    static bool last_l1 = false;
+    const bool l1 = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
+    if (l1 && !last_l1) {
+        auton_right();
+    }
+    last_l1 = l1;
+
+    if (masterController.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
         pneumatic_group.toggle();
     }
 
