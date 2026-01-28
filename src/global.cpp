@@ -1,24 +1,44 @@
 #include "global.hpp"
-#include "lemlib/api.hpp"
-#include "autons.hpp"  
-#include "driver_profile.hpp"
+
 
 /** Define Variables  */
 int current_profile_selection = 0; // Currently selected profile index
 std::vector<ProfileOption> profile_list = {
-    {"Default", default_profile_init, default_profile_loop},
-    {"Calvin", calvin_profile_init, calvin_profile_loop},
-    {"IDK", unknown_profile_init, unknown_profile_loop}
+    {"Default", default_profile_init, default_profile_loop, "Basic default driving profile"},
+    {"Calvin", calvin_profile_init, calvin_profile_loop, "precision driver profile"},
+    {"IDK", unknown_profile_init, unknown_profile_loop, "Experimental profile"}
 };
 
-int current_auton_selection = 0;// Currently selected auton index
+// -1 = red, 1 = blue
+int autonColor = 1; // default blue
 
-std::vector<AutonOption> auton_list = {
-    {"Left Auton", auton_left},
-    {"Right Auton", auton_right},
-    {"Skills", auton_skills}
+int current_auton_selection = 0;
+
+// ALL autons stored here
+std::vector<AutonOption> auton_master_list = {
+    { "EXAMPLE",
+      "1234567890123456789\n1234567890123456789\n1234567890123456789\n1234567890123456789\n1234567890123456789",
+      auton_left,
+      2 }, // blue
+
+    { "RED",
+      "Rush the middle mogo. Scores 2 rings.\nFast and consistent.",
+      auton_right,
+      0 }, // red
+
+    { "BLUE",
+      "Blue version of Mogo Rush.\nScores 2 rings.",
+      auton_left,
+      1 }, // blue
+
+    { "Skills Auton",
+      "Runs full skills path.\nWorks on red or blue.",
+      auton_left,
+      2 }, // both
 };
-int autonColor = 1; // 1 is blue by defualt  -1 is red
+
+// Starts empty — will be filled based on autonColor
+std::vector<AutonOption> auton_list = {};
 
 // Define variables 
 
@@ -28,19 +48,37 @@ pros::Controller masterController(pros::E_CONTROLLER_MASTER);
 // Define VEX Motors
 
 // Define VEX Motor Groups
-pros::MotorGroup left_motor_group({1, -2,3, -4}, pros::MotorGearset::blue); // left motors use 600 RPM cartrifges
-pros::MotorGroup right_motor_group({5,-6,7,-8}, pros::MotorGearset::blue); // right motors use 600 RPM cartridges
+pros::MotorGroup left_motor_group({-7,8,9,10}, pros::MotorGearset::blue); // left motors use 600 RPM cartrifges
+pros::MotorGroup right_motor_group({1,-2,-3,-4}, pros::MotorGearset::blue); // right motors use 600 RPM cartridges
+pros::MotorGroup intake_group_lower({18, -20}, pros::MotorGearset::blue); // four intake motors run together with blue cartridges (flip signs if wiring requires reversal)
+pros::MotorGroup intake_group_upper({17, -19,}, pros::MotorGearset::blue);
+// Define Pneumatics
+pros::adi::Pneumatics scrapperPneumatics({'A'}, false);
+pros::adi::Pneumatics liftPneumatics({'B'}, false);
+pros::adi::Pneumatics hoodPneumatics({'C'}, false);
 
 // Define VEX Sensors
-pros::Imu imu(17); 
-pros::Rotation horizontal_encoder(20); // horizontal tracking wheel Rotation sensor
-pros::Rotation vertical_encoder(21); // vertical tracking wheel Rotation sensor
+pros::Imu imu(15); 
+// pros::Distance distance(16);
+pros::Rotation horizontal_encoder(12); // horizontal tracking wheel Rotation sensor
+pros::Rotation vertical_encoder(11); // vertical tracking wheel Rotation sensor
+
+lemlib::ExpoDriveCurve throttle_curve(3, // joystick deadband out of 127
+                                     10, // minimum output where drivetrain will move out of 127
+                                     1.019 // expo curve gain
+);
+
+// input curve for steer input during driver control
+lemlib::ExpoDriveCurve steer_curve(3, // joystick deadband out of 127
+                                  10, // minimum output where drivetrain will move out of 127
+                                  1.019 // expo curve gain
+);
 
 // Define LebLib 
-lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_275, -5.75); // horizontal tracking wheel
-lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_275, -2.5); // vertical tracking wheel
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_2, -2); // horizontal tracking wheel
+lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_2, -2); // vertical tracking wheel
 lemlib::ControllerSettings angular_controller(
-    0, 0, 0,   // kP, kI, kD
+    3.4, 0, 0,   // kP, kI, kD
     0,         // antiWindup
     0, 0,      // small error range & timeout
     0, 0,      // large error range & timeout
@@ -48,7 +86,7 @@ lemlib::ControllerSettings angular_controller(
 );
 
 lemlib::ControllerSettings lateral_controller(
-    0, 0, 0,   // kP, kI, kD
+    5.5, 0, 0,   // kP, kI, kD
     0,         // antiWindup
     0, 0,      // small error range & timeout
     0, 0,      // large error range & timeout
