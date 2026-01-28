@@ -35,12 +35,28 @@ void togglenUpperIntake(int velocity, int direction){
     }
 }
 
+void intakeHold(pros::controller_digital_e_t in,
+                pros::controller_digital_e_t out,
+                pros::MotorGroup& intake,
+                int speed = 125) {
+
+    if (masterController.get_digital(in)){
+        intake.move(-speed);
+    } else if (masterController.get_digital(out)) {
+        intake.move(speed);
+    } else {
+        intake.move(0);
+    }
+}
+
+
+
 void default_profile_init() {
     masterController.set_text(0,1, "test 0");
 }
 
 void default_profile_loop() {
-
+    /**
     if ((masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1))) { 
         togglenLowerIntake(-120, -1);  
     } else if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){ 
@@ -52,6 +68,15 @@ void default_profile_loop() {
     } else if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2)){ 
         togglenUpperIntake(120, 1);  
     }
+    */
+   intakeHold(pros::E_CONTROLLER_DIGITAL_L1,
+           pros::E_CONTROLLER_DIGITAL_L2,
+           intake_group_lower);
+
+    intakeHold(pros::E_CONTROLLER_DIGITAL_R1,
+            pros::E_CONTROLLER_DIGITAL_R2,
+            intake_group_upper);
+
 
     static bool last_l1 = false;
     const bool l1 = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_X);
@@ -77,11 +102,8 @@ void default_profile_loop() {
 
     leftY = throttle_curve.curve(leftY);
     rightX    = steer_curve.curve(rightX);
-    //chassis.arcade(leftY, rightX);
-    //hold task
-
+    
     chassis.arcade(leftY, rightX);
-    //chassis.curvature(leftY, rightX);
     pros::delay(10);
 
 }
