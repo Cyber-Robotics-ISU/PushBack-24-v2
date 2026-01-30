@@ -35,18 +35,27 @@ void togglenUpperIntake(int velocity, int direction){
     }
 }
 
+void intakeHold(pros::controller_digital_e_t in,
+                pros::controller_digital_e_t out,
+                pros::MotorGroup& intake,
+                int speed = 125) {
+
+    if (masterController.get_digital(in)){
+        intake.move(-speed);
+    } else if (masterController.get_digital(out)) {
+        intake.move(speed);
+    } else {
+        intake.move(0);
+    }
+}
+
+
+
 void default_profile_init() {
     masterController.set_text(0,1, "default");
 }
 
 void default_profile_loop() {
-
-    static bool last_l1 = false;
-    const bool l1 = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_X);
-    if (l1 && !last_l1) {
-        auton_right();
-    }
-    last_l1 = l1;
 
     if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
         scrapperPneumatics.toggle();
@@ -110,7 +119,6 @@ void default_profile_loop() {
     //hold task
 
     chassis.arcade(leftY, rightX);
-    //chassis.curvature(leftY, rightX);
     pros::delay(10);
 
 }
