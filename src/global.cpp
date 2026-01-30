@@ -50,8 +50,9 @@ pros::Controller masterController(pros::E_CONTROLLER_MASTER);
 // Define VEX Motor Groups
 pros::MotorGroup left_motor_group({-7,8,9,10}, pros::MotorGearset::blue); // left motors use 600 RPM cartrifges
 pros::MotorGroup right_motor_group({1,-2,-3,-4}, pros::MotorGearset::blue); // right motors use 600 RPM cartridges
-pros::MotorGroup intake_group_lower({18, -20}, pros::MotorGearset::blue); // four intake motors run together with blue cartridges (flip signs if wiring requires reversal)
-pros::MotorGroup intake_group_upper({17, -19,}, pros::MotorGearset::blue);
+pros::MotorGroup intake_group_lower({-18,17}, pros::MotorGearset::blue); // four intake motors run together with blue cartridges (flip signs if wiring requires reversal)
+pros::MotorGroup intake_group_upper({-20}, pros::MotorGearset::blue);
+pros::MotorGroup shooter({19}, pros::MotorGearset::blue);
 // Define Pneumatics
 pros::adi::Pneumatics scrapperPneumatics({'A'}, false);
 pros::adi::Pneumatics liftPneumatics({'B'}, false);

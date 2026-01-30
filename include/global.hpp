@@ -53,6 +53,7 @@ extern pros::MotorGroup right_motor_group;
 
 extern pros::MotorGroup intake_group_lower;
 extern pros::MotorGroup intake_group_upper;
+extern pros::MotorGroup shooter;
 
 // Define VEX Sensors
 extern pros::Imu imu;
