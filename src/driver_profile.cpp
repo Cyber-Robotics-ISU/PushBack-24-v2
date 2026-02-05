@@ -3,6 +3,7 @@
 #include <string> 
 #include <cmath>
 
+#include "autons.hpp"
 #include "liblvgl/lvgl.h"
 #include "api.h"
 
@@ -57,12 +58,15 @@ void default_profile_init() {
 
 void default_profile_loop() {
 
-    if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
+    /*if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
         scrapperPneumatics.toggle();
-    }
+    }*/
 
     if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)){
         liftPneumatics.toggle();
+    }
+    if(masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
+        auton_left();
     }
 
     const bool shift = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
