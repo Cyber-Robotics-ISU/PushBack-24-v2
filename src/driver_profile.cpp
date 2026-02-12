@@ -66,7 +66,7 @@ void default_profile_loop() {
         liftPneumatics.toggle();
     }
     if(masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
-        auton_left();
+        auton_right();
     }
 
     const bool shift = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
