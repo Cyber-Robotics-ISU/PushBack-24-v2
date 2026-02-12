@@ -48,21 +48,21 @@ pros::Controller masterController(pros::E_CONTROLLER_MASTER);
 // Define VEX Motors
 
 // Define VEX Motor Groups
-pros::MotorGroup left_motor_group({-7,8,9,10}, pros::MotorGearset::blue); // left motors use 600 RPM cartrifges
+pros::MotorGroup left_motor_group({6,7,8,-9}, pros::MotorGearset::blue); // left motors use 600 RPM cartrifges
 pros::MotorGroup right_motor_group({1,-2,-3,-4}, pros::MotorGearset::blue); // right motors use 600 RPM cartridges
 pros::MotorGroup intake_group_lower({-18,17}, pros::MotorGearset::blue); // four intake motors run together with blue cartridges (flip signs if wiring requires reversal)
-pros::MotorGroup intake_group_upper({-20}, pros::MotorGearset::blue);
-pros::MotorGroup shooter({19}, pros::MotorGearset::blue);
+pros::MotorGroup intake_group_upper({}, pros::MotorGearset::blue);
+pros::MotorGroup shooter({}, pros::MotorGearset::blue);
 // Define Pneumatics
 pros::adi::Pneumatics scrapperPneumatics({'A'}, false);
 pros::adi::Pneumatics liftPneumatics({'B'}, false);
 pros::adi::Pneumatics hoodPneumatics({'C'}, false);
 
 // Define VEX Sensors
-pros::Imu imu(15); 
+pros::Imu imu(11); 
 // pros::Distance distance(16);
-pros::Rotation horizontal_encoder(12); // horizontal tracking wheel Rotation sensor
-pros::Rotation vertical_encoder(11); // vertical tracking wheel Rotation sensor
+pros::Rotation horizontal_encoder(20); // horizontal tracking wheel Rotation sensor
+pros::Rotation vertical_encoder(19); // vertical tracking wheel Rotation sensor
 
 lemlib::ExpoDriveCurve throttle_curve(3, // joystick deadband out of 127
                                      10, // minimum output where drivetrain will move out of 127
@@ -79,7 +79,7 @@ lemlib::ExpoDriveCurve steer_curve(3, // joystick deadband out of 127
 lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_2, -2); // horizontal tracking wheel
 lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_2, -2); // vertical tracking wheel
 lemlib::ControllerSettings angular_controller(
-    3.4, 0, 0,   // kP, kI, kD
+    0.475, 0, 0,   // kP, kI, kD
     0,         // antiWindup
     0, 0,      // small error range & timeout
     0, 0,      // large error range & timeout
@@ -87,7 +87,7 @@ lemlib::ControllerSettings angular_controller(
 );
 
 lemlib::ControllerSettings lateral_controller(
-    5.5, 0, 0,   // kP, kI, kD
+    6.1, 0, 0,   // kP, kI, kD
     0,         // antiWindup
     0, 0,      // small error range & timeout
     0, 0,      // large error range & timeout
