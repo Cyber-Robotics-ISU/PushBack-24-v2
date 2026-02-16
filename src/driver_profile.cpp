@@ -8,119 +8,125 @@
 
 #include "global.hpp"
 
-bool lowerIntakeToggle = false;
-bool upperIntakeToggle = false;
-
-void togglenLowerIntake(int velocity, int direction){
-    if(!lowerIntakeToggle){
-        intake_group_lower.move(velocity * direction);
-        pros::delay(10);
-        lowerIntakeToggle = true;
-    } else {
-        intake_group_lower.move(0);
-        pros::delay(10);
-        lowerIntakeToggle = false;
-    }
-}
-
-void togglenUpperIntake(int velocity, int direction){
-    if(!upperIntakeToggle){
-        intake_group_upper.move(velocity * direction);
-        pros::delay(10);
-        upperIntakeToggle = true;
-    } else {
-        intake_group_upper.move(0);
-        pros::delay(10);
-        upperIntakeToggle = false;
-    }
-}
-
-void intakeHold(pros::controller_digital_e_t in,
-                pros::controller_digital_e_t out,
-                pros::MotorGroup& intake,
-                int speed = 125) {
-
-    if (masterController.get_digital(in)){
-        intake.move(-speed);
-    } else if (masterController.get_digital(out)) {
-        intake.move(speed);
-    } else {
-        intake.move(0);
-    }
-}
-
-
-
 void default_profile_init() {
-    masterController.set_text(0,1, "default");
+    masterController.set_text(0, 1, "Default");
+    startSubsystemTask(); 
 }
 
 void default_profile_loop() {
-
-    if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
-        scrapperPneumatics.toggle();
+    if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
+        toggleScrapper();
+    }
+    if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
+        toggleLift();
     }
 
-    if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)){
-        liftPneumatics.toggle();
-    }
+    bool shift = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
+    bool r2 = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
+    bool r1 = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
+    bool down = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN);
+    bool b = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_B);
 
-    const bool shift = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
-    const bool r2 = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
-    const bool r1 = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
-    const bool down = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN);
-    const bool b = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_B);
-
-    constexpr int kMaxSpeed = 127;
-    constexpr int kShooterSlow = 0; // ~25% reverse for intake assist
-    int lower_intake_cmd = 0;
-    int upper_intake_cmd = 0;
-    int shooter_cmd = 0;
-
-    if (shift && r2) {
-        lower_intake_cmd = -kMaxSpeed;
-        upper_intake_cmd = -kMaxSpeed;
-    } else if (r2) {
-        lower_intake_cmd = kMaxSpeed;
-        upper_intake_cmd = kMaxSpeed;
-        shooter_cmd = kShooterSlow;
-    }
-
-    if (shift && down) {
-        upper_intake_cmd = -kMaxSpeed;
-        shooter_cmd = -kMaxSpeed;
-    } else if (down) {
-        upper_intake_cmd = kMaxSpeed;
-        shooter_cmd = kMaxSpeed;
-    }
-
-    if (shift && b) {
-        lower_intake_cmd = -kMaxSpeed;
-    } else if (b) {
-        lower_intake_cmd = kMaxSpeed;
-    }
+    // Determine Mode (Priority Logic)
+    // The order of these if/else statements determines priority.
+    // Last checked wins, or first checked wins depending on structure.
+    // Here we use if-else if to ensure only ONE mode is sent.
+    
+    RobotMode desiredMode = RobotMode::IDLE;
 
     if (r1) {
-        shooter_cmd = kMaxSpeed;
-        lower_intake_cmd = kMaxSpeed;
-        upper_intake_cmd = kMaxSpeed;
+        desiredMode = RobotMode::FULL_FIRE;
+    } 
+    else if (shift && b) {
+        desiredMode = RobotMode::OUTTAKE_LOWER;
+    }
+    else if (b) {
+        desiredMode = RobotMode::INTAKE_LOWER;
+    }
+    else if (shift && down) {
+        desiredMode = RobotMode::UNJAM_UPPER;
+    }
+    else if (down) {
+        desiredMode = RobotMode::SHOOT_PREP;
+    }
+    else if (shift && r2) {
+        desiredMode = RobotMode::OUTTAKE_ALL;
+    }
+    else if (r2) {
+        desiredMode = RobotMode::INTAKE_INDEX;
     }
 
-    intake_group_lower.move(lower_intake_cmd);
-    intake_group_upper.move(upper_intake_cmd);
-    shooter.move(shooter_cmd);
+    setRobotMode(desiredMode);
+
 
     int leftY = masterController.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
     int rightX = masterController.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
     leftY = throttle_curve.curve(leftY);
     rightX = steer_curve.curve(rightX);
-    //chassis.arcade(leftY, rightX);
-    //hold task
 
     chassis.arcade(leftY, rightX);
-    pros::delay(10);
+}
 
+void testing_profile_init() {
+}
+
+void testing_profile_loop() {
+    if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
+        toggleScrapper();
+    }
+    if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
+        toggleLift();
+    }
+    if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+        test_auton_straight();
+    }
+
+    bool shift = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
+    bool r2 = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
+    bool r1 = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
+    bool down = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN);
+    bool b = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_B);
+
+    // Determine Mode (Priority Logic)
+    // The order of these if/else statements determines priority.
+    // Last checked wins, or first checked wins depending on structure.
+    // Here we use if-else if to ensure only ONE mode is sent.
+    
+    RobotMode desiredMode = RobotMode::IDLE;
+
+    if (r1) {
+        desiredMode = RobotMode::FULL_FIRE;
+    } 
+    else if (shift && b) {
+        desiredMode = RobotMode::OUTTAKE_LOWER;
+    }
+    else if (b) {
+        desiredMode = RobotMode::INTAKE_LOWER;
+    }
+    else if (shift && down) {
+        desiredMode = RobotMode::UNJAM_UPPER;
+    }
+    else if (down) {
+        desiredMode = RobotMode::SHOOT_PREP;
+    }
+    else if (shift && r2) {
+        desiredMode = RobotMode::OUTTAKE_ALL;
+    }
+    else if (r2) {
+        desiredMode = RobotMode::INTAKE_INDEX;
+    }
+
+    setRobotMode(desiredMode);
+
+
+    int leftY = masterController.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+    int rightX = masterController.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+
+    leftY = throttle_curve.curve(leftY);
+    rightX = steer_curve.curve(rightX);
+
+    chassis.arcade(leftY, rightX);
 }
 
 void calvin_profile_init() {

@@ -2,17 +2,19 @@
 #include <vector>
 #include <string>
 #include <cmath>
+#include <cstdio> // Required for snprintf
 
 #include "liblvgl/lvgl.h"
-
 #include "global.hpp"
-#include "autons.hpp"  
 
 // ============================================================================
 //                               AUTON LOGIC
 // ============================================================================
 
 void updateAutonList() {
+    if (auton_master_list.empty()) return;
+
+    // 1. Save the name of the currently selected auton to restore it later if possible
     std::string last_selected_name = "";
     if (!auton_list.empty() && current_auton_selection >= 0 && current_auton_selection < auton_list.size()) {
         last_selected_name = auton_list[current_auton_selection].name;
@@ -20,24 +22,27 @@ void updateAutonList() {
 
     auton_list.clear();
 
-    for (auto &a : auton_master_list) {
-        if (a.side == 2) {
-            auton_list.push_back(a); 
-        } else if (a.side == 1 && autonColor == 1) {
-            auton_list.push_back(a); 
-        } else if (a.side == 0 && autonColor == -1) {
-            auton_list.push_back(a); 
+    // 2. Build filtered list
+    // LOGIC: Add if the auton is for BOTH sides (2) OR matches current color
+    for (const auto &a : auton_master_list) {
+        if (a.side == SIDE_BOTH || a.side == autonColor) {
+            auton_list.push_back(a);
         }
     }
 
-    current_auton_selection = 0; 
-    for (size_t i = 0; i < auton_list.size(); i++) {
-        if (last_selected_name == auton_list[i].name) {
-            current_auton_selection = i;
-            break; 
+    // 3. Restore selection or reset to 0
+    current_auton_selection = 0;
+    if (!last_selected_name.empty()) {
+        for (size_t i = 0; i < auton_list.size(); i++) {
+            if (auton_list[i].name == last_selected_name) {
+                current_auton_selection = i;
+                break;
+            }
         }
     }
 }
+
+
 
 // ============================================================================
 //                            GENERAL UI HELPERS
@@ -71,7 +76,7 @@ void create_main_screen() {
 
     lv_obj_set_style_bg_color(screen, lv_color_hex(0x222244), LV_PART_MAIN);
     lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, LV_PART_MAIN);
-
+    updateAutonList();
     // Generate Auton Button Text
     std::string autonInfo = "Auton Select\n";
     if (auton_list.empty()) {
@@ -95,10 +100,7 @@ void create_main_screen() {
     create_button(screen, "Profiles", LV_ALIGN_TOP_RIGHT, -20, 20, create_profiles_screen);
 
     // Bottom Left: Odometry
-    //create_button(screen, "Odometry", LV_ALIGN_BOTTOM_LEFT, 20, -20, create_pid_screen);
-
-    // Bottom Right: PID Tuning
-    //create_button(screen, "PID Tuning", LV_ALIGN_BOTTOM_RIGHT, -20, -20, create_pid_screen);
+    create_button(screen, "Odometry", LV_ALIGN_BOTTOM_LEFT, 20, -20, create_odometry_screen);
 }
 
 // ============================================================================
@@ -106,13 +108,13 @@ void create_main_screen() {
 // ============================================================================
 
 void auton_red_select() {
-    autonColor = -1; 
+    autonColor = SIDE_RED; // Set to 0
     updateAutonList(); 
     create_auton_screen();
 }
 
 void auton_blue_select() {
-    autonColor = 1; 
+    autonColor = SIDE_BLUE; // Set to 1
     updateAutonList();
     create_auton_screen();
 }
@@ -164,11 +166,22 @@ void create_auton_screen() {
 
     // Data Labels
     lv_obj_t* name_label = lv_label_create(screen);
-    lv_label_set_text(name_label, auton_list[current_auton_selection].name);
+    if (auton_list.empty()) {
+        lv_label_set_text(name_label, "No autons for this side");
+    } else {
+        if (current_auton_selection < 0 || current_auton_selection >= (int)auton_list.size()) {
+            current_auton_selection = 0;
+        }
+        lv_label_set_text(name_label, auton_list[current_auton_selection].name);
+    }
     lv_obj_align(name_label, LV_ALIGN_CENTER, 0, -50);
 
     lv_obj_t* desc_label = lv_label_create(screen);
-    lv_label_set_text(desc_label, auton_list[current_auton_selection].description);
+    if (auton_list.empty()) {
+        lv_label_set_text(desc_label, "Select another side or add autons.");
+    } else {
+        lv_label_set_text(desc_label, auton_list[current_auton_selection].description);
+    }
     lv_label_set_long_mode(desc_label, LV_LABEL_LONG_WRAP);
     lv_obj_set_width(desc_label, 200); 
     lv_obj_set_style_text_align(desc_label, LV_TEXT_ALIGN_CENTER, 0);
@@ -206,6 +219,7 @@ void create_auton_screen() {
     
     lv_obj_add_event_cb(left, [](lv_event_t* e) {
          lv_obj_t** labels = (lv_obj_t**)lv_event_get_user_data(e);
+         if (auton_list.empty()) return;
          current_auton_selection--;
          if (current_auton_selection < 0) current_auton_selection = auton_list.size() - 1;
          lv_label_set_text(labels[0], auton_list[current_auton_selection].name);
@@ -222,6 +236,7 @@ void create_auton_screen() {
 
     lv_obj_add_event_cb(right, [](lv_event_t* e) {
          lv_obj_t** labels = (lv_obj_t**)lv_event_get_user_data(e);
+         if (auton_list.empty()) return;
          current_auton_selection++;
          if (current_auton_selection >= (int)auton_list.size()) current_auton_selection = 0;
          lv_label_set_text(labels[0], auton_list[current_auton_selection].name);
@@ -306,4 +321,82 @@ void create_profiles_screen() {
     lv_label_set_text(blabel, "Back");
     lv_obj_center(blabel);
     lv_obj_add_event_cb(back, [](lv_event_t* e){ create_main_screen(); }, LV_EVENT_CLICKED, nullptr);
+}
+
+// ============================================================================
+//                            ODOMETRY SCREEN
+// ============================================================================
+
+static void update_odom_label(lv_obj_t* label) {
+    // 1. Get the current pose from LemLib
+    lemlib::Pose p = chassis.getPose();
+
+    // 2. Get raw encoder values for debugging
+    // Horizontal is a Rotation sensor (centidegrees -> degrees)
+    double h_enc_deg = horizontal_encoder.get_position() / 100.0;
+    
+    // Vertical is a Rotation sensor
+    double v_enc_deg = vertical_encoder.get_position() / 100.0; // Changed to double for better precision
+
+    // ===========================
+    //    UPDATE LVGL (GUI)
+    // ===========================
+    char buf[160];
+    std::snprintf(
+        buf, sizeof(buf),
+        "X: %.2f\nY: %.2f\nTheta: %.1f\nVEnc: %.2f\nHEnc: %.2f",
+        p.x, 
+        p.y, 
+        p.theta, 
+        v_enc_deg, 
+        h_enc_deg
+    );
+    lv_label_set_text(label, buf);
+
+    // ===========================
+    //   UPDATE PROS LCD (DEBUG)
+    // ===========================
+    // This prints to the standard text lines (if not covered by the LVGL object)
+    pros::lcd::print(0, "X: %.2f", p.x);
+    pros::lcd::print(1, "Y: %.2f", p.y);
+    pros::lcd::print(2, "Theta: %.2f", p.theta);
+    pros::lcd::print(3, "V-Enc: %.2f", v_enc_deg);
+    pros::lcd::print(4, "H-Enc: %.2f", h_enc_deg);
+}
+
+static void odom_update_timer(lv_timer_t* timer) {
+    lv_obj_t* label = static_cast<lv_obj_t*>(timer->user_data);
+    update_odom_label(label);
+}
+
+void create_odometry_screen() {
+    lv_obj_t* screen = lv_obj_create(nullptr);
+    lv_screen_load(screen);
+
+    lv_obj_t* label = lv_label_create(screen);
+    // You may need to adjust the font size depending on your LVGL config
+    lv_obj_set_style_text_font(label, &lv_font_montserrat_30, 0); 
+    lv_obj_align(label, LV_ALIGN_CENTER, 0, -20);
+
+    // Initialize and update label continuously while this screen is active.
+    update_odom_label(label);
+    
+    // Update every 100ms (10Hz)
+    lv_timer_create(odom_update_timer, 100, label);
+
+    // Back Button
+    lv_obj_t* back = lv_button_create(screen);
+    lv_obj_set_size(back, 100, 50);
+    lv_obj_align(back, LV_ALIGN_BOTTOM_MID, 0, -10);
+    
+    lv_obj_t* blabel = lv_label_create(back);
+    lv_label_set_text(blabel, "Back");
+    lv_obj_center(blabel);
+    
+    // Event callback to return to main screen
+    lv_obj_add_event_cb(back, [](lv_event_t* e){ 
+        // Ensure you clean up the timer/screen if necessary, 
+        // or just load the main screen if your memory management handles it.
+        create_main_screen(); 
+    }, LV_EVENT_CLICKED, nullptr);
 }

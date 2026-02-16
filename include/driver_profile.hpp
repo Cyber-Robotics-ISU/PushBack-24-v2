@@ -8,6 +8,8 @@
 #include "api.h"
 
 #include "global.hpp"
+#include "controlls.hpp"
+#include "autons.hpp"
 
 
 // Function declarations of different user profiles for driver control

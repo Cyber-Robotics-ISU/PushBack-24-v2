@@ -1,5 +1,6 @@
 #pragma once
 #include "global.hpp"
+#include "controlls.hpp"
 
 #include "liblvgl/lvgl.h"
 #include "api.h"
@@ -10,8 +11,10 @@
 
 
 // Function declarations for autonomous routines
+void test_auton_straight();
+void test_auton_turn();
 
-void test_auton();
-void auton_left();
-void auton_right();
+void blue_side();
+void red_ride();
+
 void auton_skills();

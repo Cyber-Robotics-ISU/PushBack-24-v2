@@ -16,6 +16,15 @@ struct ProfileOption { // profile option struct
 extern int current_profile_selection; // current profile selection
 extern std::vector<ProfileOption> profile_list;
 
+// Standardized Side IDs
+#define SIDE_RED  -1
+#define SIDE_BLUE 1
+#define SIDE_BOTH 2
+
+// Macros to check the global state easily
+#define IS_RED  (autonColor == SIDE_RED)
+#define IS_BLUE (autonColor == SIDE_BLUE)
+
 struct AutonOption {
     const char* name;
     const char* description;
@@ -25,11 +34,6 @@ struct AutonOption {
 
 // -1 = red, 1 = blue
 extern int autonColor;
-#define IS_BLUE (autonColor == 1)
-#define IS_RED  (autonColor == -1)
-
-
-
 extern int current_auton_selection;
 
 // master list (ALL autons)

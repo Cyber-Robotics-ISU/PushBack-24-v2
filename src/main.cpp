@@ -23,6 +23,9 @@
  */
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
+    horizontal_encoder.reset_position();
+    vertical_encoder.reset_position();
+    pros::delay(1000);
     chassis.calibrate(); // calibrate sensors
     create_main_screen();
     /** 
@@ -70,7 +73,21 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-    auton_list[current_auton_selection].func();
+     updateAutonList();
+
+    const std::vector<AutonOption>* list = &auton_list;
+    if (list->empty()) {
+        list = &auton_master_list; // fallback if filtering produced nothing
+    }
+
+    if (list->empty()) {
+        return;
+    }
+
+    int idx = current_auton_selection;
+    if (idx < 0 || idx >= (int)list->size()) idx = 0;
+
+    (*list)[idx].func();
 }
 
 /**
