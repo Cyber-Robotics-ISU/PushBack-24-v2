@@ -14,6 +14,8 @@
 void test_auton_straight();
 void test_auton_turn();
 
+void exampleAuton();
+
 void blue_side();
 void red_ride();
 

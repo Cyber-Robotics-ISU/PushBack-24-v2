@@ -17,35 +17,35 @@ int current_auton_selection = 0;
 std::vector<AutonOption> auton_master_list = {
     { "Red Side",
         "loads and color shorts",
-        test_auton_straight,
+        exampleAuton,
       0 }, // red
      { "Blue Side",
         "loads and color shorts",
-        test_auton_straight,
+        exampleAuton,
       1 }, // blue
     { "EXAMPLE",
       "1234567890123456789\n1234567890123456789\n1234567890123456789\n1234567890123456789\n1234567890123456789",
-      test_auton_straight,
+      exampleAuton,
       2 }, // blue
 
     { "RED",
       "Rush the middle mogo. Scores 2 rings.\nFast and consistent.",
-      test_auton_straight,
+      exampleAuton,
       0 }, // red
 
     { "BLUE",
       "Blue version of Mogo Rush.\nScores 2 rings.",
-      test_auton_straight,
+      exampleAuton,
       1 }, // blue
 
     { "Left Skills Auton",
       "Runs full skills path.\nLeft Side",
-      test_auton_straight,
+      exampleAuton,
       2 },
       
       { "Right Skills Auton",
       "Runs full skills path.\nRight Side",
-      test_auton_straight,
+      exampleAuton,
       2 },// both
 };
 std::vector<AutonOption> auton_list;
@@ -97,7 +97,7 @@ lemlib::ControllerSettings angular_controller(
 );
 
 lemlib::ControllerSettings lateral_controller(
-    6.12, 0, 0,   // kP, kI, kD
+    5.5, 0, 0,   // kP, kI, kD
     0,         // antiWindup
     0, 0,      // small error range & timeout
     0, 0,      // large error range & timeout

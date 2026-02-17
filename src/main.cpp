@@ -15,6 +15,13 @@
 #include "ui.hpp" 
 #include "pros/apix.h"
 
+// set the brake mode of the drivetrain motors to hold
+//chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+// set the brake mode of the drivetrain motors to coast
+//chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
+// set the brake mode of the drivetrain motors to brake
+//chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -41,6 +48,7 @@ void initialize() {
         }
     });
     */
+   chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 }
 
 /**
