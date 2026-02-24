@@ -6,7 +6,7 @@ int current_profile_selection = 0; // Currently selected profile index
 std::vector<ProfileOption> profile_list = {
     {"Default", default_profile_init, default_profile_loop, "Basic default driving profile"},
     {"Calvin", calvin_profile_init, calvin_profile_loop, "precision driver profile"},
-    {"IDK", unknown_profile_init, unknown_profile_loop, "Experimental profile"}
+    {"Driver 2", driver2_profile_init, driver2_profile_loop, "Experimental profile"}
 };
 
 // -1 = red, 1 = blue
@@ -16,11 +16,6 @@ int current_auton_selection = 0;
 
 // ALL autons stored here
 std::vector<AutonOption> auton_master_list = {
-    { "EXAMPLE",
-      "1234567890123456789\n1234567890123456789\n1234567890123456789\n1234567890123456789\n1234567890123456789",
-      auton_left,
-      2 }, // blue
-
     { "RED",
       "Rush the middle mogo. Scores 2 rings.\nFast and consistent.",
       auton_right,
@@ -33,7 +28,7 @@ std::vector<AutonOption> auton_master_list = {
 
     { "Skills Auton",
       "Runs full skills path.\nWorks on red or blue.",
-      auton_left,
+      auton_skills,
       2 }, // both
 };
 
@@ -56,11 +51,10 @@ pros::MotorGroup shooter({19}, pros::MotorGearset::blue);
 // Define Pneumatics
 pros::adi::Pneumatics scrapperPneumatics({'A'}, false);
 pros::adi::Pneumatics liftPneumatics({'B'}, false);
-pros::adi::Pneumatics hoodPneumatics({'C'}, false);
+pros::adi::Pneumatics descorerPneumatics({'C'}, false);
 
 // Define VEX Sensors
 pros::Imu imu(15); 
-// pros::Distance distance(16);
 pros::Rotation horizontal_encoder(12); // horizontal tracking wheel Rotation sensor
 pros::Rotation vertical_encoder(11); // vertical tracking wheel Rotation sensor
 
@@ -76,8 +70,8 @@ lemlib::ExpoDriveCurve steer_curve(3, // joystick deadband out of 127
 );
 
 // Define LebLib 
-lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_2, -2); // horizontal tracking wheel
-lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_2, -2); // vertical tracking wheel
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_2, -4); // horizontal tracking wheel
+lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_2, 0); // vertical tracking wheel
 lemlib::ControllerSettings angular_controller(
     3.4, 0, 0,   // kP, kI, kD
     0,         // antiWindup
@@ -105,10 +99,10 @@ lemlib::OdomSensors sensors(&vertical_tracking_wheel, // vertical tracking wheel
 // Drivetrain settings
 lemlib::Drivetrain drivetrain(&left_motor_group, // left motor group
                               &right_motor_group, // right motor group
-                              10, // 10 inch track width
-                              lemlib::Omniwheel::NEW_4, // using new 4" omnis
-                              360, // drivetrain rpm is 360
-                              2 // horizontal drift is 2 (for now)
+                              10.75, // 10 inch track width
+                              lemlib::Omniwheel::NEW_275, // using new 4" omnis
+                              600, // drivetrain rpm is 360
+                              0 // horizontal drift is 2 (for now)
 );
 
 // Create the chassis

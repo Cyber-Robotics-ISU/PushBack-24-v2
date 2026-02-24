@@ -131,10 +131,72 @@ void calvin_profile_loop() {
    default_profile_loop();
 }
 
-void unknown_profile_init() {
-    masterController.set_text(0,1, "test 2");
+void driver2_profile_init() {
+    masterController.set_text(0,1, "Driver 2");
 }
 
-void unknown_profile_loop() {
-    
+void driver2_profile_loop() {
+    if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
+        scrapperPneumatics.toggle();
+    }
+
+    if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)){
+        liftPneumatics.toggle();
+    }
+
+    const bool shift = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
+    const bool r2 = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
+    const bool r1 = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
+    const bool down = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN);
+    const bool b = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_B);
+
+    constexpr int kMaxSpeed = 127;
+    constexpr int kShooterSlow = 0; // ~25% reverse for intake assist
+    int lower_intake_cmd = 0;
+    int upper_intake_cmd = 0;
+    int shooter_cmd = 0;
+
+    if (shift && r2) {
+        lower_intake_cmd = -kMaxSpeed;
+        upper_intake_cmd = -kMaxSpeed;
+    } else if (r2) {
+        lower_intake_cmd = kMaxSpeed;
+        upper_intake_cmd = kMaxSpeed;
+        shooter_cmd = kShooterSlow;
+    }
+
+    if (shift && down) {
+        upper_intake_cmd = -kMaxSpeed;
+        shooter_cmd = -kMaxSpeed;
+    } else if (down) {
+        upper_intake_cmd = kMaxSpeed;
+        shooter_cmd = kMaxSpeed;
+    }
+
+    if (shift && b) {
+        lower_intake_cmd = -kMaxSpeed;
+    } else if (b) {
+        lower_intake_cmd = kMaxSpeed;
+    }
+
+    if (r1) {
+        shooter_cmd = kMaxSpeed;
+        lower_intake_cmd = kMaxSpeed;
+        upper_intake_cmd = kMaxSpeed;
+    }
+
+    intake_group_lower.move(lower_intake_cmd);
+    intake_group_upper.move(upper_intake_cmd);
+    shooter.move(shooter_cmd);
+
+    int leftY = masterController.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+    int rightY = masterController.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+
+    leftY = throttle_curve.curve(leftY);
+    rightY = steer_curve.curve(rightY);
+    //chassis.arcade(leftY, rightX);
+    //hold task
+
+    chassis.tank(leftY, rightY);
+    pros::delay(10);
 }
