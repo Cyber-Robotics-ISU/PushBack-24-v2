@@ -17,35 +17,35 @@ int current_auton_selection = 0;
 std::vector<AutonOption> auton_master_list = {
     { "Red Side",
         "loads and color shorts",
-        exampleAuton,
+        test_auton_straight,
       0 }, // red
      { "Blue Side",
         "loads and color shorts",
-        exampleAuton,
+        test_auton_straight,
       1 }, // blue
     { "EXAMPLE",
       "1234567890123456789\n1234567890123456789\n1234567890123456789\n1234567890123456789\n1234567890123456789",
-      exampleAuton,
+      test_auton_straight,
       2 }, // blue
 
     { "RED",
       "Rush the middle mogo. Scores 2 rings.\nFast and consistent.",
-      exampleAuton,
+      test_auton_straight,
       0 }, // red
 
     { "BLUE",
       "Blue version of Mogo Rush.\nScores 2 rings.",
-      exampleAuton,
+      test_auton_straight,
       1 }, // blue
 
     { "Left Skills Auton",
       "Runs full skills path.\nLeft Side",
-      exampleAuton,
+      test_auton_straight,
       2 },
       
       { "Right Skills Auton",
       "Runs full skills path.\nRight Side",
-      exampleAuton,
+      test_auton_straight,
       2 },// both
 };
 std::vector<AutonOption> auton_list;
@@ -58,7 +58,7 @@ pros::Controller masterController(pros::E_CONTROLLER_MASTER);
 // Define VEX Motors
 
 // Define VEX Motor Groups
-pros::MotorGroup left_motor_group({-7,8,9,10}, pros::MotorGearset::blue); // left motors use 600 RPM cartrifges
+pros::MotorGroup left_motor_group({-9,8,6,7}, pros::MotorGearset::blue); // left motors use 600 RPM cartrifges
 pros::MotorGroup right_motor_group({1,-2,-3,-4}, pros::MotorGearset::blue); // right motors use 600 RPM cartridges
 pros::MotorGroup intake_group_lower({-11,20}, pros::MotorGearset::blue); // four intake motors run together with blue cartridges (flip signs if wiring requires reversal)
 pros::MotorGroup intake_group_upper({-16}, pros::MotorGearset::blue);
@@ -86,7 +86,7 @@ lemlib::ExpoDriveCurve steer_curve(3, // joystick deadband out of 127
 );
 
 // Define LebLib 
-lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_2, -2); // distance needs to be changed
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_2, -4.25); // distance needs to be changed
 lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_2, 0); // distance needs to be changed
 lemlib::ControllerSettings angular_controller(
     3.4, 0, 32.75,   // kP, kI, kD
@@ -97,7 +97,7 @@ lemlib::ControllerSettings angular_controller(
 );
 
 lemlib::ControllerSettings lateral_controller(
-    5.5, 0, 0,   // kP, kI, kD
+    9.5, 0, 21.5,   // kP, kI, kD
     0,         // antiWindup
     0, 0,      // small error range & timeout
     0, 0,      // large error range & timeout
