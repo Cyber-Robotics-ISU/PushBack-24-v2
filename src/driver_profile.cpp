@@ -22,7 +22,7 @@ void default_profile_loop() {
     }
 
     if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-        test_auton_straight();
+        test_auton_turn();
     }
 
     bool shift = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
@@ -83,7 +83,7 @@ void testing_profile_loop() {
         toggleLift();
     }
     if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-        test_auton_straight();
+        test_auton_turn();
     }
 
     bool shift = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_L2);

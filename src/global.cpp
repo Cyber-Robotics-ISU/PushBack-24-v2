@@ -17,25 +17,25 @@ int current_auton_selection = 0;
 std::vector<AutonOption> auton_master_list = {
     { "Red Side",
         "loads and color shorts",
-        test_auton_straight,
+        test_auton_turn,
       0 }, // red
      { "Blue Side",
         "loads and color shorts",
-        test_auton_straight,
+        test_auton_turn,
       1 }, // blue
     { "EXAMPLE",
       "1234567890123456789\n1234567890123456789\n1234567890123456789\n1234567890123456789\n1234567890123456789",
-      test_auton_straight,
+      test_auton_turn,
       2 }, // blue
 
     { "RED",
       "Rush the middle mogo. Scores 2 rings.\nFast and consistent.",
-      test_auton_straight,
+      test_auton_turn,
       0 }, // red
 
     { "BLUE",
       "Blue version of Mogo Rush.\nScores 2 rings.",
-      test_auton_straight,
+      test_auton_turn,
       1 }, // blue
 
     { "Left Skills Auton",
@@ -86,10 +86,10 @@ lemlib::ExpoDriveCurve steer_curve(3, // joystick deadband out of 127
 );
 
 // Define LebLib 
-lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_2, -4.25); // distance needs to be changed
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_2, -4); // distance needs to be changed
 lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_2, 0); // distance needs to be changed
 lemlib::ControllerSettings angular_controller(
-    3.4, 0, 32.75,   // kP, kI, kD
+    7.5, 0, 10,   // kP, kI, kD
     0,         // antiWindup
     0, 0,      // small error range & timeout
     0, 0,      // large error range & timeout
@@ -97,7 +97,7 @@ lemlib::ControllerSettings angular_controller(
 );
 
 lemlib::ControllerSettings lateral_controller(
-    9.5, 0, 21.5,   // kP, kI, kD
+    16, 0.0, 21,   // kP, kI, kD 8.95
     0,         // antiWindup
     0, 0,      // small error range & timeout
     0, 0,      // large error range & timeout
@@ -115,10 +115,10 @@ lemlib::OdomSensors sensors(&vertical_tracking_wheel, // vertical tracking wheel
 // Drivetrain settings
 lemlib::Drivetrain drivetrain(&left_motor_group, // left motor group
                               &right_motor_group, // right motor group
-                              10.75, // 10 inch track width
+                              11, // 10 inch track width
                               lemlib::Omniwheel::NEW_275, // using new 4" omnis
                               600, // drivetrain rpm is 360
-                              0 // horizontal drift is 2 (for now)
+                              2 // horizontal drift is 2 (for now)
 );
 
 // Create the chassis

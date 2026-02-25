@@ -16,7 +16,7 @@
 void test_auton_straight() {
     // Reset pose so 12 inches forward is along +Y
     chassis.setPose(0, 0, 0);
-    chassis.moveToPoint(0, 12, 2000, {}, false);
+    chassis.moveToPoint(0, 23, 4000, {.maxSpeed = 127});
 }
 
 void test_auton_turn() {
