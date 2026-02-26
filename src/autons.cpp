@@ -22,7 +22,7 @@ void test_auton_straight() {
 void test_auton_turn() {
     // Turn 90 degrees to the right from current heading
     chassis.setPose(0, 0, 0);
-    chassis.turnToHeading(90, 2000, {.maxSpeed = 100}, false);
+    chassis.turnToHeading(90, 2000, {.maxSpeed = 127}, false);
 }
 
 void red_side() {

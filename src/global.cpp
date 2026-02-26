@@ -89,7 +89,7 @@ lemlib::ExpoDriveCurve steer_curve(3, // joystick deadband out of 127
 lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_2, -4); // distance needs to be changed
 lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_2, 0); // distance needs to be changed
 lemlib::ControllerSettings angular_controller(
-    7.5, 0, 10,   // kP, kI, kD
+    15.25, 0.0, 0,   // kP, kI, kD
     0,         // antiWindup
     0, 0,      // small error range & timeout
     0, 0,      // large error range & timeout
