@@ -48,7 +48,8 @@ void initialize() {
         }
     });
     */
-   chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+   //chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+   chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
 }
 
 /**
@@ -113,7 +114,7 @@ void autonomous() {
  */
 void opcontrol() {
     pros::delay(20);
-
+    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
 	int last_profile_selection = current_profile_selection;
     profile_list[current_profile_selection].init();
 

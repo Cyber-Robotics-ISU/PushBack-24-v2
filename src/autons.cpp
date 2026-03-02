@@ -16,13 +16,13 @@
 void test_auton_straight() {
     // Reset pose so 12 inches forward is along +Y
     chassis.setPose(0, 0, 0);
-    chassis.moveToPoint(0, 23, 4000, {.maxSpeed = 127});
+    chassis.moveToPoint(0, 24, 10000, {.maxSpeed = 120}, true);
 }
 
 void test_auton_turn() {
     // Turn 90 degrees to the right from current heading
     chassis.setPose(0, 0, 0);
-    chassis.turnToHeading(90, 2000, {.maxSpeed = 127}, false);
+    chassis.turnToHeading(90, 100000, {.maxSpeed = 125}, false);
 }
 
 void red_side() {
