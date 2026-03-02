@@ -69,7 +69,7 @@ pros::adi::Pneumatics liftPneumatics({'B'}, false);
 pros::adi::Pneumatics hoodPneumatics({'C'}, false);
 
 // Define VEX Sensors
-pros::Imu imu(15); 
+pros::Imu imu(10); 
 // pros::Distance distance(16);
 pros::Rotation horizontal_encoder(19); // horizontal tracking wheel Rotation sensor
 pros::Rotation vertical_encoder(18); // vertical tracking wheel Rotation sensor
