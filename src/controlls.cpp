@@ -29,6 +29,12 @@ void subsystemControlTaskFn(void* param) {
                 shooter.move(0);
                 break;
 
+            case RobotMode::INTAKE_INDEX_SPIN_BACK: // R2
+                intake_group_lower.move(kMaxSpeed);
+                intake_group_upper.move(kMaxSpeed);
+                shooter.move(-50); 
+                break;
+
             case RobotMode::INTAKE_INDEX: // R2
                 intake_group_lower.move(kMaxSpeed);
                 intake_group_upper.move(kMaxSpeed);
@@ -58,7 +64,6 @@ void subsystemControlTaskFn(void* param) {
                 intake_group_upper.move(0);
                 shooter.move(0);
                 break;
-
             case RobotMode::FULL_FIRE: // R1
                 intake_group_lower.move(kMaxSpeed);
                 intake_group_upper.move(kMaxSpeed);

@@ -16,44 +16,51 @@
 void test_auton_straight() {
     // Reset pose so 12 inches forward is along +Y
     chassis.setPose(0, 0, 0);
-    chassis.moveToPoint(0, 24, 10000, {.maxSpeed = 120}, true);
+    chassis.moveToPose(
+    0, // x = 0
+    24, // y = 0
+    0, // theta = 0
+    4000, // timeout of 4000ms
+    {.lead = 0.3}
+);
+    //chassis.moveToPoint(0, 36, 4000, {.maxSpeed = 120}, true);
 }
 
 void test_auton_turn() {
     // Turn 90 degrees to the right from current heading
     chassis.setPose(0, 0, 0);
-    chassis.turnToHeading(90, 100000, {.maxSpeed = 125}, false);
+    chassis.turnToHeading(90, 4000, {.maxSpeed = 125}, true);
 }
 
 void red_side() {
     startSubsystemTask();
-    
     chassis.setPose(0, 0, 0);
-
-    setRobotMode(RobotMode::INTAKE_INDEX);
-    
-    chassis.moveToPoint(0, 24, 2000);
+    chassis.moveToPose(0,35,90, 4000);
     chassis.waitUntilDone();
-
-    setRobotMode(RobotMode::IDLE);
-
-
-    chassis.turnToHeading(90, 1000);
+    scrapperPneumatics.toggle();
+    setRobotMode(RobotMode::INTAKE_LOWER);
+    chassis.moveToPose(29, 23, 90, 4000);
     chassis.waitUntilDone();
-
+    //added on
+    pros::delay(250);
+    lemlib::Pose pose = chassis.getPose();
+    chassis.moveToPoint(
+        10,        // new X
+        pose.y,    // keep current Y
+        4000       // timeout
+    );
+    chassis.waitUntilDone();
+    scrapperPneumatics.toggle();
+    hoodPneumatics.toggle();
+    chassis.moveToPose(
+        -32,        // new X
+        pose.y+2.5,    // keep current Y
+        -90,
+        4000       // timeout
+    );
+    chassis.waitUntilDone();
     setRobotMode(RobotMode::FULL_FIRE);
-    
     pros::delay(1000);
-    
-    setRobotMode(RobotMode::IDLE);
-
-
-    toggleScrapper();
-    
-    chassis.moveToPoint(0, 10, 2000, {.forwards = false});
-    chassis.waitUntilDone();
-    
-    toggleScrapper();
 }
 
 void blue_side(){

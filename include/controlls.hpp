@@ -13,6 +13,7 @@
 enum class RobotMode {
     IDLE,
     OUTTAKE_ALL,        // Shift + R2: Reverse intakes
+    INTAKE_INDEX_SPIN_BACK,
     INTAKE_INDEX,       // R2: Intakes forward, Shooter off/slow
     UNJAM_UPPER,        // Shift + Down: Upper & Shooter reverse
     SHOOT_PREP,         // Down: Upper & Shooter forward
