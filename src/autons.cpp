@@ -29,38 +29,63 @@ void test_auton_straight() {
 void test_auton_turn() {
     // Turn 90 degrees to the right from current heading
     chassis.setPose(0, 0, 0);
-    chassis.turnToHeading(90, 4000, {.maxSpeed = 125}, true);
+    chassis.turnToHeading(90, 4000, {.maxSpeed = 127}, true);
 }
 
 void red_side() {
-    startSubsystemTask();
     chassis.setPose(0, 0, 0);
-    chassis.moveToPose(0,35,90, 4000);
-    chassis.waitUntilDone();
-    scrapperPneumatics.toggle();
-    setRobotMode(RobotMode::INTAKE_LOWER);
-    chassis.moveToPose(29, 23, 90, 4000);
-    chassis.waitUntilDone();
-    //added on
+    constexpr int kIntakeSpeed = 127;
+    scrapper.toggle();
     pros::delay(250);
+    extender.toggle();
+    pros::delay(250);
+    extender.toggle();
+    pros::delay(250);
+    scrapper.toggle();
+    pros::delay(250);
+    chassis.moveToPose(0,34.5,-90, 3000);
+    chassis.waitUntilDone();
+    scrapper.toggle();
+    chassis.waitUntilDone();
+    intake.move(kIntakeSpeed);
+    pros::delay(1000);
+    chassis.moveToPose(-13.5, 29, -90, 2000);
+    pros::delay(3000);
     lemlib::Pose pose = chassis.getPose();
     chassis.moveToPoint(
-        10,        // new X
+        pose.x+23,        // new X
         pose.y,    // keep current Y
-        4000       // timeout
+        3000,
+        {.forwards = false}       // timeout
     );
     chassis.waitUntilDone();
-    scrapperPneumatics.toggle();
-    hoodPneumatics.toggle();
-    chassis.moveToPose(
-        -32,        // new X
-        pose.y+2.5,    // keep current Y
-        -90,
-        4000       // timeout
-    );
-    chassis.waitUntilDone();
-    setRobotMode(RobotMode::FULL_FIRE);
-    pros::delay(1000);
+    pros::delay(250);
+    extender.toggle();
+    pros::delay(250);
+    scrapper.toggle();
+    scorer.move_absolute(650, 40);
+    // pose = chassis.getPose();
+    // chassis.waitUntilDone();
+    // //added on
+    // pros::delay(250);
+    // lemlib::Pose pose = chassis.getPose();
+    // chassis.moveToPoint(
+    //     10,        // new X
+    //     pose.y,    // keep current Y
+    //     4000       // timeout
+    // );
+    // chassis.waitUntilDone();
+    // scrapper.toggle();
+    // extender.toggle();
+    // chassis.moveToPose(
+    //     -32,        // new X
+    //     pose.y+2.5,    // keep current Y
+    //     -90,
+    //     4000       // timeout
+    // );
+    // chassis.waitUntilDone();
+    // pros::delay(1000);
+    // intake.move(0);
 }
 
 void blue_side(){

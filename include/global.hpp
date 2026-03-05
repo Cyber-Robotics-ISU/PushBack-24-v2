@@ -46,18 +46,17 @@ extern std::vector<AutonOption> auton_list;
 extern pros::Controller masterController;
 
 
-extern pros::adi::Pneumatics scrapperPneumatics;
-extern pros::adi::Pneumatics liftPneumatics;
-extern pros::adi::Pneumatics hoodPneumatics;
+extern pros::adi::Pneumatics extender;
+extern pros::adi::Pneumatics blocker;
+extern pros::adi::Pneumatics scrapper;
 // Define VEX Motors
 
 // Define VEX Motor Groups
 extern pros::MotorGroup left_motor_group;
 extern pros::MotorGroup right_motor_group;
 
-extern pros::MotorGroup intake_group_lower;
-extern pros::MotorGroup intake_group_upper;
-extern pros::MotorGroup shooter;
+extern pros::Motor scorer;
+extern pros::Motor intake;
 
 // Define VEX Sensors
 extern pros::Imu imu;

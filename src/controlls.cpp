@@ -1,103 +1,121 @@
 #include "controlls.hpp"
-#include <vector>  
-#include <string> 
-#include <cmath>
 
-// Initialize default mode
-RobotMode currentRobotMode = RobotMode::IDLE;
-pros::Task* subsystemTaskHandle = nullptr;
+#include <cstdint>
 
-/**
- * Logic for the background task
- * continuously updates motor powers based on currentRobotMode
- */
-void subsystemControlTaskFn(void* param) {
-    while (true) {
-        // Define speeds locally for easy tuning
-        constexpr int kMaxSpeed = 127;
-        
-        switch (currentRobotMode) {
-            case RobotMode::IDLE:
-                intake_group_lower.move(0);
-                intake_group_upper.move(0);
-                shooter.move(0);
-                break;
+namespace {
+constexpr int kIntakeSpeed = 127;
 
-            case RobotMode::OUTTAKE_ALL: // Shift + R2
-                intake_group_lower.move(-kMaxSpeed);
-                intake_group_upper.move(-kMaxSpeed);
-                shooter.move(0);
-                break;
+// Scorer/lever move settings (motor encoder degrees).
+constexpr int kScorerMaxSpeed = 40;
+constexpr double kScorerDownAngle = 0.0;
+constexpr double kScorerUpAngleRetracted = 750.0;
+constexpr double kScorerUpAngleExtended = 650.0;
+constexpr int kBlockerDownDelayMs = 100;
 
-            case RobotMode::INTAKE_INDEX_SPIN_BACK: // R2
-                intake_group_lower.move(kMaxSpeed);
-                intake_group_upper.move(kMaxSpeed);
-                shooter.move(-50); 
-                break;
+// If the blocker moves the wrong way, flip this to false.
+constexpr bool kBlockerDownIsExtended = true;
 
-            case RobotMode::INTAKE_INDEX: // R2
-                intake_group_lower.move(kMaxSpeed);
-                intake_group_upper.move(kMaxSpeed);
-                shooter.move(0); 
-                break;
+bool scorer_up = false;
+bool scorer_zeroed = false;
+bool lever_up_delay_pending = false;
+std::uint32_t lever_up_delay_start_ms = 0;
+bool intake_toggled_on = false;
 
-            case RobotMode::UNJAM_UPPER: // Shift + Down
-                intake_group_lower.move(0); 
-                intake_group_upper.move(-kMaxSpeed);
-                shooter.move(-kMaxSpeed);
-                break;
+double scorer_target_for_state(bool is_up, bool extender_extended) {
+    if (!is_up) {
+        return kScorerDownAngle;
+    }
+    return extender_extended ? kScorerUpAngleExtended : kScorerUpAngleRetracted;
+}
 
-            case RobotMode::SHOOT_PREP: // Down
-                intake_group_lower.move(0);
-                intake_group_upper.move(kMaxSpeed);
-                shooter.move(kMaxSpeed);
-                break;
+void set_blocker_down(bool down) {
+    if (kBlockerDownIsExtended) {
+        down ? blocker.extend() : blocker.retract();
+    } else {
+        down ? blocker.retract() : blocker.extend();
+    }
+}
 
-            case RobotMode::OUTTAKE_LOWER: // Shift + B
-                intake_group_lower.move(-kMaxSpeed);
-                intake_group_upper.move(0); 
-                shooter.move(0);
-                break;
+void start_lever_up_delay() {
+    lever_up_delay_pending = true;
+    lever_up_delay_start_ms = pros::millis();
+}
 
-            case RobotMode::INTAKE_LOWER: // B
-                intake_group_lower.move(kMaxSpeed);
-                intake_group_upper.move(0);
-                shooter.move(0);
-                break;
-            case RobotMode::FULL_FIRE: // R1
-                intake_group_lower.move(kMaxSpeed);
-                intake_group_upper.move(kMaxSpeed);
-                shooter.move(kMaxSpeed);
-                break;
+void scorer_move_to_state() {
+    const double target = scorer_target_for_state(scorer_up, extender.is_extended());
+    scorer.move_absolute(target, kScorerMaxSpeed);
+}
+} // namespace
+
+void driver_controls_init() {
+    scorer.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    // Coast only the drivetrain when stopped
+    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
+
+    if (!scorer_zeroed) {
+        scorer.tare_position(); // assume lever is at the "down" reference on first init
+        scorer_zeroed = true;
+    }
+    scorer_move_to_state();
+}
+
+void driver_controls_update() {
+    // Intake: R2 toggles forward, L2+R2 holds reverse
+    const bool r2_pressed = masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2);
+    const bool l2_held = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
+    const bool r2_held = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
+
+    if (r2_pressed && !l2_held) {
+        intake_toggled_on = !intake_toggled_on;
+    }
+
+    if (l2_held && r2_held) {
+        intake.move(-kIntakeSpeed);
+    } else if (intake_toggled_on) {
+        intake.move(kIntakeSpeed);
+    } else {
+        intake.move(0);
+    }
+
+    // Lever toggle on R1 (shift+R1 for extender), sync blocker to lever state
+    if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)) {
+        const bool shift = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
+        if (shift) {
+            extender.toggle();
+            if (scorer_up) {
+                if (!lever_up_delay_pending) {
+                    scorer_move_to_state();
+                }
+            }
+        } else {
+            scorer_up = !scorer_up;
+            if (scorer_up) {
+                set_blocker_down(true);
+                start_lever_up_delay();
+            } else {
+                lever_up_delay_pending = false;
+                scorer_move_to_state();
+                set_blocker_down(false);
+            }
         }
-
-        pros::delay(10); 
     }
-}
 
-void setRobotMode(RobotMode mode) {
-    currentRobotMode = mode;
-}
-
-void toggleScrapper() {
-    scrapperPneumatics.toggle();
-}
-
-void toggleLift() {
-    liftPneumatics.toggle();
-}
-
-// Task Management
-void startSubsystemTask() {
-    if (subsystemTaskHandle == nullptr) {
-        subsystemTaskHandle = new pros::Task(subsystemControlTaskFn);
+    // Scrapper toggle on L1
+    if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
+        scrapper.toggle();
     }
-}
 
-void stopSubsystemTask() {
-    if (subsystemTaskHandle != nullptr) {
-        subsystemTaskHandle->remove();
-        delete subsystemTaskHandle;
-        subsystemTaskHandle = nullptr;
+    // Separate blocker toggle on B
+    if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+        lever_up_delay_pending = false;
+        blocker.toggle();
     }
+
+    if (lever_up_delay_pending &&
+        (pros::millis() - lever_up_delay_start_ms >= static_cast<std::uint32_t>(kBlockerDownDelayMs))) {
+        scorer_move_to_state();
+        lever_up_delay_pending = false;
+    }
+
+    // No PID hold on the lever
 }

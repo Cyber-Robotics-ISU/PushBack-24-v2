@@ -34,6 +34,12 @@ void initialize() {
     vertical_encoder.reset_position();
     pros::delay(1000);
     chassis.calibrate(); // calibrate sensors
+    // Wait for IMU calibration to finish before starting anything else.
+    while (imu.is_calibrating()) {
+        pros::lcd::print(0, "IMU calibrating...");
+        pros::delay(20);
+    }
+    pros::lcd::print(0, "IMU ready");
     create_main_screen();
     /** 
     // print position to brain screen

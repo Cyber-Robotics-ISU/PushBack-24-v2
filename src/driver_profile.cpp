@@ -10,61 +10,14 @@
 
 void default_profile_init() {
     masterController.set_text(0, 1, "Default");
-    startSubsystemTask(); 
+    driver_controls_init();
 }
 
 void default_profile_loop() {
-    if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
-        toggleScrapper();
-    }
-    if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-        toggleLift();
-    }
-
     if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
         red_side();
     }
-
-    if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
-        red_side();
-    }
-
-    bool shift = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
-    bool r2 = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
-    bool r1 = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
-    bool down = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN);
-    bool b = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_B);
-
-    // Determine Mode (Priority Logic)
-    // The order of these if/else statements determines priority.
-    // Last checked wins, or first checked wins depending on structure.
-    // Here we use if-else if to ensure only ONE mode is sent.
-    
-    RobotMode desiredMode = RobotMode::IDLE;
-
-    if (r1) {
-        desiredMode = RobotMode::FULL_FIRE;
-    } 
-    else if (shift && b) {
-        desiredMode = RobotMode::OUTTAKE_LOWER;
-    }
-    else if (b) {
-        desiredMode = RobotMode::INTAKE_LOWER;
-    }
-    else if (shift && down) {
-        desiredMode = RobotMode::UNJAM_UPPER;
-    }
-    else if (down) {
-        desiredMode = RobotMode::SHOOT_PREP;
-    }
-    else if (shift && r2) {
-        desiredMode = RobotMode::OUTTAKE_ALL;
-    }
-    else if (r2) {
-        desiredMode = RobotMode::INTAKE_INDEX;
-    }
-
-    setRobotMode(desiredMode);
+    driver_controls_update();
 
 
     int leftY = masterController.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
@@ -77,55 +30,14 @@ void default_profile_loop() {
 }
 
 void testing_profile_init() {
+    driver_controls_init();
 }
 
 void testing_profile_loop() {
-    if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
-        toggleScrapper();
-    }
-    if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-        toggleLift();
-    }
     if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-        test_auton_turn();
+        red_side();
     }
-
-    bool shift = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_L2);
-    bool r2 = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
-    bool r1 = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_R1);
-    bool down = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN);
-    bool b = masterController.get_digital(pros::E_CONTROLLER_DIGITAL_B);
-
-    // Determine Mode (Priority Logic)
-    // The order of these if/else statements determines priority.
-    // Last checked wins, or first checked wins depending on structure.
-    // Here we use if-else if to ensure only ONE mode is sent.
-    
-    RobotMode desiredMode = RobotMode::IDLE;
-
-    if (r1) {
-        desiredMode = RobotMode::FULL_FIRE;
-    } 
-    else if (shift && b) {
-        desiredMode = RobotMode::OUTTAKE_LOWER;
-    }
-    else if (b) {
-        desiredMode = RobotMode::INTAKE_LOWER;
-    }
-    else if (shift && down) {
-        desiredMode = RobotMode::UNJAM_UPPER;
-    }
-    else if (down) {
-        desiredMode = RobotMode::SHOOT_PREP;
-    }
-    else if (shift && r2) {
-        desiredMode = RobotMode::OUTTAKE_ALL;
-    }
-    else if (r2) {
-        desiredMode = RobotMode::INTAKE_INDEX;
-    }
-
-    setRobotMode(desiredMode);
+    driver_controls_update();
 
 
     int leftY = masterController.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
