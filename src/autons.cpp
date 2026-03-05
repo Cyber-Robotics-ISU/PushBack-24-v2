@@ -37,7 +37,7 @@ void red_side() {
     startOdomTask();
     setRobotMode(RobotMode::IDLE);
     chassis.setPose(0, 0, 0);
-    chassis.moveToPose(0,36,90, 1500);
+    chassis.moveToPose(0,33,90.5, 2500, {.maxSpeed = 90, .minSpeed = 50});
     chassis.waitUntilDone();
     scrapperPneumatics.toggle();
     setRobotMode(RobotMode::INTAKE_INDEX_SPIN_BACK);
@@ -62,8 +62,8 @@ void red_side() {
     scrapperPneumatics.toggle();
     liftPneumatics.toggle();
     chassis.moveToPose(
-        -32,        // new X
-        pose.y+1.75,    // keep current Y
+        -33,        // new X
+        pose.y,    // keep current Y 1.75
         -90,
         3500       // timeout
     );
@@ -74,7 +74,14 @@ void red_side() {
     pros::delay(100);
     setRobotMode(RobotMode::FULL_FIRE);
     pros::delay(1100);
+    setRobotMode(RobotMode::FULL_FIRE);
+    pros::delay(500);
+    setRobotMode(RobotMode::OUTTAKE_ALL);
+    pros::delay(200);
+    setRobotMode(RobotMode::FULL_FIRE);
+    pros::delay(1100);
     //pros::delay(1750);
+
 }
 
 void blue_side(){
