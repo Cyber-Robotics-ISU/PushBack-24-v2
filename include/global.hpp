@@ -48,7 +48,7 @@ extern pros::Controller masterController;
 
 extern pros::adi::Pneumatics scrapperPneumatics;
 extern pros::adi::Pneumatics liftPneumatics;
-extern pros::adi::Pneumatics hoodPneumatics;
+extern pros::adi::Pneumatics deScorePneumatics;
 // Define VEX Motors
 
 // Define VEX Motor Groups

@@ -34,33 +34,47 @@ void test_auton_turn() {
 
 void red_side() {
     startSubsystemTask();
+    startOdomTask();
+    setRobotMode(RobotMode::IDLE);
     chassis.setPose(0, 0, 0);
-    chassis.moveToPose(0,35,90, 4000);
+    chassis.moveToPose(0,36,90, 1500);
     chassis.waitUntilDone();
     scrapperPneumatics.toggle();
-    setRobotMode(RobotMode::INTAKE_LOWER);
-    chassis.moveToPose(29, 23, 90, 4000);
+    setRobotMode(RobotMode::INTAKE_INDEX_SPIN_BACK);
+    //chassis.moveToPose(29.5, 23, 90, 2500);
+    chassis.moveToPose(
+    29.5,      // same X
+    23,        // 23 + 10 inches forward
+    90,        // keep same heading
+    2000,
+    {.maxSpeed = 75, .minSpeed = 60}
+    );
     chassis.waitUntilDone();
     //added on
-    pros::delay(250);
+    pros::delay(525); // was 250
     lemlib::Pose pose = chassis.getPose();
     chassis.moveToPoint(
         10,        // new X
         pose.y,    // keep current Y
-        4000       // timeout
+        2250       // timeout
     );
     chassis.waitUntilDone();
     scrapperPneumatics.toggle();
-    hoodPneumatics.toggle();
+    liftPneumatics.toggle();
     chassis.moveToPose(
         -32,        // new X
-        pose.y+2.5,    // keep current Y
+        pose.y+1.75,    // keep current Y
         -90,
-        4000       // timeout
+        3500       // timeout
     );
     chassis.waitUntilDone();
     setRobotMode(RobotMode::FULL_FIRE);
-    pros::delay(1000);
+    pros::delay(500);
+    setRobotMode(RobotMode::OUTTAKE_ALL);
+    pros::delay(100);
+    setRobotMode(RobotMode::FULL_FIRE);
+    pros::delay(1100);
+    //pros::delay(1750);
 }
 
 void blue_side(){
@@ -91,4 +105,56 @@ void exampleAuton() {
     // 5. Turn 180 Deg
     chassis.turnToHeading(90, 1000, {.maxSpeed = 120});
     chassis.waitUntilDone();
+}
+
+void new_ride_side(){
+    startSubsystemTask();
+    startOdomTask();
+    setRobotMode(RobotMode::IDLE);
+    chassis.setPose(0, 0, 0);
+    chassis.moveToPose(0,35,90.5, 2000);
+    chassis.waitUntilDone();
+    scrapperPneumatics.toggle();
+    setRobotMode(RobotMode::INTAKE_INDEX_SPIN_BACK);
+    {
+        lemlib::Pose poseA = getGlobalPose();
+
+        chassis.moveToPose(
+            19,
+            poseA.y,
+            90,
+            2250,
+            {.maxSpeed = 110, .minSpeed = 70}
+        );
+    }
+    chassis.waitUntilDone();
+    pros::delay(525);
+    {
+        lemlib::Pose poseB = getGlobalPose();
+
+        chassis.moveToPose(
+            0,
+            poseB.y,
+            90,
+            2250,
+            {.maxSpeed = 90, .minSpeed = 50}
+        );
+    }
+    chassis.waitUntilDone();
+    //scrapperPneumatics.toggle();
+    //liftPneumatics.toggle();
+    /** 
+    {
+        lemlib::Pose poseA = getGlobalPose();
+        chassis.moveToPose(
+            -32,
+            poseA.y + 1.75,
+            -90,
+            3500
+        );
+    }
+    chassis.waitUntilDone();
+    setRobotMode(RobotMode::FULL_FIRE);
+    pros::delay(1500);
+    */
 }

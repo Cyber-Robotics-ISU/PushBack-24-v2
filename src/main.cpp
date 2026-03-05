@@ -49,6 +49,9 @@ void initialize() {
     });
     */
    //chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+    intake_group_lower.set_current_limit(1500);
+    intake_group_upper.set_current_limit(1500);
+    shooter.set_current_limit(1500);
    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
 }
 

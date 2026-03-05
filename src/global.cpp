@@ -65,8 +65,8 @@ pros::MotorGroup intake_group_upper({-16}, pros::MotorGearset::blue);
 pros::MotorGroup shooter({17}, pros::MotorGearset::blue);
 // Define Pneumatics
 pros::adi::Pneumatics scrapperPneumatics({'B'}, false);
-pros::adi::Pneumatics liftPneumatics({'C'}, false);
-pros::adi::Pneumatics hoodPneumatics({'A'}, false);
+pros::adi::Pneumatics liftPneumatics({'A'}, false);
+pros::adi::Pneumatics deScorePneumatics({'C'}, false);
 
 // Define VEX Sensors
 pros::Imu imu(10); 

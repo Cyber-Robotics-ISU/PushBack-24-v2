@@ -20,7 +20,9 @@ void default_profile_loop() {
     if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
         toggleLift();
     }
-
+    if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+        toggleDeScore();
+    }
     if (masterController.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
         red_side();
     }

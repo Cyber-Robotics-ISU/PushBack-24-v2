@@ -29,9 +29,20 @@ extern RobotMode currentRobotMode;
 void startSubsystemTask();
 void stopSubsystemTask();
 
+// Expose the pose so other files can read it
+extern lemlib::Pose globalPose;
+
+// Odom task control
+void startOdomTask();
+void stopOdomTask();
+
+// Optional: safe getter (recommended)
+lemlib::Pose getGlobalPose();
+
 // Setters
 void setRobotMode(RobotMode mode);
 
 // Helper for pneumatics (since they are instant toggles, not continuous states)
 void toggleScrapper();
 void toggleLift();
+void toggleDeScore();
