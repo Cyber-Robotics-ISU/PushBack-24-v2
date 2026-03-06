@@ -36,34 +36,121 @@ void red_side() {
     chassis.setPose(0, 0, 0);
     constexpr int kIntakeSpeed = 127;
     scrapper.toggle();
-    pros::delay(250);
     extender.toggle();
-    pros::delay(250);
-    extender.toggle();
-    pros::delay(250);
-    scrapper.toggle();
-    pros::delay(250);
-    chassis.moveToPose(0,34.5,-90, 3000);
-    chassis.waitUntilDone();
-    scrapper.toggle();
+    pros::delay(150);
+    chassis.moveToPose(0,33.5,-90, 2000);
     chassis.waitUntilDone();
     intake.move(kIntakeSpeed);
-    pros::delay(1000);
-    chassis.moveToPose(-13.5, 29, -90, 2000);
-    pros::delay(3000);
     lemlib::Pose pose = chassis.getPose();
+    chassis.moveToPoint(
+        pose.x-13,        // new X
+        pose.y,    // keep current Y
+        2500,
+        {.maxSpeed=30}
+    );
+    pros::delay(2000);
+    pose = chassis.getPose();
+    chassis.moveToPoint(
+        pose.x+3.5,        // new X
+        pose.y,    // keep current Y
+        500,
+        {.forwards = false}       // timeout
+    );
+    pros::delay(1000);
+    pose = chassis.getPose();
+    chassis.moveToPoint(
+        pose.x-5.5,        // new X
+        pose.y,    // keep current Y
+        500,
+        {.forwards = false}       // timeout
+    );
+    pros::delay(1000);
+    pose = chassis.getPose();
+    chassis.moveToPoint(
+        pose.x+3.5,        // new X
+        pose.y,    // keep current Y
+        500,
+        {.forwards = false}       // timeout
+    );
+
+    pros::delay(1000);
+    pose = chassis.getPose();
     chassis.moveToPoint(
         pose.x+23,        // new X
         pose.y,    // keep current Y
-        3000,
+        2000,
         {.forwards = false}       // timeout
     );
     chassis.waitUntilDone();
-    pros::delay(250);
-    extender.toggle();
-    pros::delay(250);
-    scrapper.toggle();
+    blocker.toggle();
+    pros::delay(1000);
     scorer.move_absolute(650, 40);
+    pros::delay(2000);
+    scorer.move_absolute(-650, 40);
+    pros::delay(1500);
+    blocker.toggle();
+    pros::delay(1550);
+
+    // pose = chassis.getPose();
+    // chassis.moveToPoint(
+    //     pose.x-26.5,        // new X
+    //     pose.y,    // keep current Y
+    //     3000
+    // );
+    // chassis.waitUntilDone();
+    // pose = chassis.getPose();
+    // chassis.moveToPoint(
+    //     pose.x-4.5,        // new X
+    //     pose.y,    // keep current Y
+    //     250,
+    //     {.forwards = false}       // timeout
+    // );
+    // pose = chassis.getPose();
+    // chassis.moveToPoint(
+    //     pose.x+3.5,        // new X
+    //     pose.y,    // keep current Y
+    //     250,
+    //     {.forwards = false}       // timeout
+    // );
+    // pros::delay(1000);
+    // pose = chassis.getPose();
+    // chassis.moveToPoint(
+    //     pose.x-6.5,        // new X
+    //     pose.y,    // keep current Y
+    //     500,
+    //     {.forwards = false}       // timeout
+    // );
+    // pros::delay(1000);
+    // extender.toggle();
+    // pros::delay(100);
+    // blocker.toggle();
+    // pros::delay(250);
+    // scorer.move_absolute(750, 40);
+    // pros::delay(150);
+    // scorer.move_absolute(-750, 40);
+    // blocker.toggle();
+    // pros::delay(250);
+
+    // pros::delay(4000);
+    // pose = chassis.getPose();
+    // chassis.moveToPoint(
+    //     pose.x+7,        // new X
+    //     pose.y,    // keep current Y
+    //     500,
+    //     {.forwards = false}       // timeout
+    // );
+    // chassis.waitUntilDone();
+    // chassis.moveToPose(42,0,-455, 3000);
+    // pros::delay(100);
+    // blocker.toggle();
+    // pros::delay(250);
+    // scorer.move_absolute(750, 40);
+    // pros::delay(150);
+    // scorer.move_absolute(-750, 40);
+    // blocker.toggle();
+
+    //fuck
+
     // pose = chassis.getPose();
     // chassis.waitUntilDone();
     // //added on
@@ -93,6 +180,8 @@ void blue_side(){
 }
 
 void auton_skills() {
+    chassis.setPose(0, 0, 0); 
+    scorer.move_absolute(650, 40);
 
 }
 

@@ -7,6 +7,7 @@ constexpr int kIntakeSpeed = 127;
 
 // Scorer/lever move settings (motor encoder degrees).
 constexpr int kScorerMaxSpeed = 40;
+constexpr int kScorerUpSpeedRetracted = 30;
 constexpr double kScorerDownAngle = 0.0;
 constexpr double kScorerUpAngleRetracted = 750.0;
 constexpr double kScorerUpAngleExtended = 650.0;
@@ -28,6 +29,13 @@ double scorer_target_for_state(bool is_up, bool extender_extended) {
     return extender_extended ? kScorerUpAngleExtended : kScorerUpAngleRetracted;
 }
 
+int scorer_speed_for_state(bool is_up, bool extender_extended) {
+    if (is_up && !extender_extended) {
+        return kScorerUpSpeedRetracted;
+    }
+    return kScorerMaxSpeed;
+}
+
 void set_blocker_down(bool down) {
     if (kBlockerDownIsExtended) {
         down ? blocker.extend() : blocker.retract();
@@ -43,7 +51,8 @@ void start_lever_up_delay() {
 
 void scorer_move_to_state() {
     const double target = scorer_target_for_state(scorer_up, extender.is_extended());
-    scorer.move_absolute(target, kScorerMaxSpeed);
+    const int speed = scorer_speed_for_state(scorer_up, extender.is_extended());
+    scorer.move_absolute(target, speed);
 }
 } // namespace
 

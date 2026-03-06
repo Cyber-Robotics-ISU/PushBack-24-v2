@@ -17,35 +17,35 @@ int current_auton_selection = 0;
 std::vector<AutonOption> auton_master_list = {
     { "Red Side",
         "loads and color shorts",
-        test_auton_straight,
+        red_side,
       0 }, // red
      { "Blue Side",
         "loads and color shorts",
-        test_auton_straight,
+        red_side,
       1 }, // blue
     { "EXAMPLE",
       "1234567890123456789\n1234567890123456789\n1234567890123456789\n1234567890123456789\n1234567890123456789",
-      test_auton_straight,
+      red_side,
       2 }, // blue
 
     { "RED",
       "Rush the middle mogo. Scores 2 rings.\nFast and consistent.",
-      test_auton_straight,
+      red_side,
       0 }, // red
 
     { "BLUE",
       "Blue version of Mogo Rush.\nScores 2 rings.",
-      test_auton_straight,
+      red_side,
       1 }, // blue
 
     { "Left Skills Auton",
       "Runs full skills path.\nLeft Side",
-      test_auton_straight,
+      auton_skills,
       2 },
       
       { "Right Skills Auton",
       "Runs full skills path.\nRight Side",
-      test_auton_straight,
+      auton_skills,
       2 },// both
 };
 std::vector<AutonOption> auton_list;
